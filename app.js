@@ -8,13 +8,22 @@ const _=require("lodash")
 const dotenv = require("dotenv").config({path:"vars/env"})
 
 const app = express();
+const PORT = process.env.PORT || 3000
+
+const uri = process.env.MONGO_CONNECTION_STRING;
 
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect(process.env.DB_SERVER);
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+  } catch (error) {
+    process.exit(1);
+  }
+}
   
 
 const itemsSchema = new mongoose.Schema({
@@ -137,6 +146,13 @@ app.get("/:what", function(req,res){
 app.get("/about", function(req, res){
   res.render("about");
 });
+
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("listening for requests");
+    })
+})
+
 
 app.listen(process.env.PORT || 3000, function() {
   console.log("Server started");
