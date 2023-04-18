@@ -5,6 +5,7 @@ const { name } = require("ejs");
 const express = require("express");
 const mongoose= require("mongoose")
 const _=require("lodash")
+const dotenv = require("dotenv").config({path:"vars/env"})
 
 const app = express();
 
@@ -13,8 +14,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect(
-  `mongodb+srv://andrea_segreto99:Brontosauro_999@cluster0.m1fmojj.mongodb.net/todolistDB`);
+mongoose.connect(process.env.DB_SERVER);
   
 
 const itemsSchema = new mongoose.Schema({
@@ -138,6 +138,6 @@ app.get("/about", function(req, res){
   res.render("about");
 });
 
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
+app.listen(PORT || 3000, function() {
+  console.log("Server started");
 });
